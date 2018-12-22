@@ -5,8 +5,8 @@ import path = require("path");
 // URL: https://gist.github.com/victorsollozzo/4134793
 export class FileSearch {
 
-    search(base, ext) {
-        return this.recFindByExt(base, ext, undefined, undefined);
+    search(base, ext, excludedDirs = []) {
+        return this.recFindByExt(base, ext, excludedDirs, undefined, undefined);
     }
 
     searchFiles(base: string, file: string, excludeDirs: string[]) {
@@ -38,7 +38,7 @@ export class FileSearch {
         return result
     }
 
-    private recFindByExt(base,ext,files,result) 
+    private recFindByExt(base,ext,excludedDirs,files,result)
     {
         files = files || fs.readdirSync(base) 
         result = result || [] 
@@ -46,9 +46,9 @@ export class FileSearch {
         files.forEach(file =>
              {
                 var newbase = path.join(base,file)
-                if ( fs.statSync(newbase).isDirectory() )
+                if ( fs.statSync(newbase).isDirectory() && !excludedDirs.includes(file))
                 {
-                    result = this.recFindByExt(newbase,ext,fs.readdirSync(newbase),result)
+                    result = this.recFindByExt(newbase,ext,excludedDirs,fs.readdirSync(newbase),result)
                 }
                 else
                 {

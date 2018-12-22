@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var fs = require("fs");
 var path = require("path");
 // This function is taken from the URL given below:
@@ -7,8 +7,9 @@ var path = require("path");
 var FileSearch = /** @class */ (function () {
     function FileSearch() {
     }
-    FileSearch.prototype.search = function (base, ext) {
-        return this.recFindByExt(base, ext, undefined, undefined);
+    FileSearch.prototype.search = function (base, ext, excludedDirs) {
+        if (excludedDirs === void 0) { excludedDirs = []; }
+        return this.recFindByExt(base, ext, excludedDirs, undefined, undefined);
     };
     FileSearch.prototype.searchFiles = function (base, file, excludeDirs) {
         return this.searchFilesRecursive(base, file, excludeDirs, undefined, undefined);
@@ -32,14 +33,14 @@ var FileSearch = /** @class */ (function () {
         });
         return result;
     };
-    FileSearch.prototype.recFindByExt = function (base, ext, files, result) {
+    FileSearch.prototype.recFindByExt = function (base, ext, excludedDirs, files, result) {
         var _this = this;
         files = files || fs.readdirSync(base);
         result = result || [];
         files.forEach(function (file) {
             var newbase = path.join(base, file);
-            if (fs.statSync(newbase).isDirectory()) {
-                result = _this.recFindByExt(newbase, ext, fs.readdirSync(newbase), result);
+            if (fs.statSync(newbase).isDirectory() && !excludedDirs.includes(file)) {
+                result = _this.recFindByExt(newbase, ext, excludedDirs, fs.readdirSync(newbase), result);
             }
             else {
                 if (file.substr(-1 * (ext.length + 1)) == '.' + ext) {
@@ -52,4 +53,3 @@ var FileSearch = /** @class */ (function () {
     return FileSearch;
 }());
 exports.FileSearch = FileSearch;
-//# sourceMappingURL=FileSearch.js.map

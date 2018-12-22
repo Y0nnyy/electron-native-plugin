@@ -149,7 +149,7 @@ class ElectronNativePlugin {
             console.log(`[WARNING]: Module ${moduleName}, configured in your package.json, not found. Please, check your dependencies.`);
             return false;
         }
-        return this.fileSearch.search(modulePath, "node").length > 0;
+        return this.fileSearch.search(modulePath, "node", ["node_modules"]).length > 0;
     }
 
     private readProjectPackage() {
